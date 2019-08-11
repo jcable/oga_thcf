@@ -1,0 +1,12 @@
+name = oga_thcf
+description = Calculate the handicap for a boat
+version = 0.1
+package = Boat Register
+core = 7.x
+files[] = oga_thcf.module
+
+; Information added by drupal.org packaging script on 2014-02-26
+version = "7.x-1.x-dev"
+core = "7.x"
+project = "boat register"
+datestamp = "1381053291"

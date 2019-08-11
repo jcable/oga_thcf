@@ -1,0 +1,42 @@
+<?php
+/*
+* Implements hook_form_alter()
+*/
+function oga_thcf_form_alter(&$form, &$form_state, $form_id)  {
+	if($form_id == "boat_node_form") {
+		$form['field_calculated_thcf']['#access'] = FALSE; //Disables the form element and hides it.
+		}
+}
+
+
+ /**
+ * Implements hook_node_update().
+ */
+ //
+function oga_thcf_node_update($node) {
+	if($node->type == "boat") {
+		//dsm('The oga_thcf_node_update() function was triggered with node id = '.$node->nid);
+		$boatid = $node->nid;
+		get_thcf($boatid);
+	}
+}
+
+
+//Call the stored procedure
+
+function get_thcf($boatid) {
+//dsm('Function get_thcf() was called');
+// Get the Drupal database connection and change the statement class to PDOStatement.
+// Save the current class for cleanup later.
+$conn = Database::getConnection();
+$saved_class = $conn->getAttribute(PDO::ATTR_STATEMENT_CLASS);
+$conn->setAttribute(PDO::ATTR_STATEMENT_CLASS, array('PDOStatement'));
+
+// Prepare the statement and bind params
+$statement = $conn->prepare("Call spthcfcalc(?)");
+$op_status = $statement->bindParam(1, $boatid, PDO::PARAM_INT | PDO::PARAM_INPUT_OUTPUT);
+
+// Execute the statement and reset the connection's statement class to the original.
+$exec_result = $statement->execute();
+$conn->setAttribute(PDO::ATTR_STATEMENT_CLASS, $saved_class);
+}
